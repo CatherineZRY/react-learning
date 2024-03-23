@@ -21,3 +21,6 @@
 /react-basic/npm-debug.log*
 /react-basic/yarn-debug.log*
 /react-basic/yarn-error.log*
+
+# react-basic-pro
+/react-basic-pro/node_modules
