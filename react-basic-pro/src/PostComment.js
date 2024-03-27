@@ -1,21 +1,28 @@
+import { useRef, useState } from 'react'
 import avatar from './images/bozai.png'
+import { v4 as uuidv4 } from 'uuid'
+import dayjs from 'dayjs'
 
 function PostComment() {
   const postCommet = () => {
     console.log('post comment')
     const commentInfo = {
-      rpid: 2,
+      rpid: uuidv4(),
       user: {
         uid: '36080105',
         avatar: '',
         uname: '许嵩',
       },
-      content: '我寻你千百度 日出到迟暮',
-      ctime: '11-13 11:29',
+      content: curComment,
+      ctime: dayjs(new Date()).format('MM-DD HH:mm'),
       like: 88,
     }
-    alert(commentInfo)
+    console.log(commentInfo);
+    setComment('');
+    commenTextarea.current.focus();
   }
+  const [curComment, setComment] = useState(''); // 输入内容清空
+  const commenTextarea = useRef(null); // 将textarea重新聚焦
 
   return (
     <div className="box-normal">
@@ -27,9 +34,11 @@ function PostComment() {
       </div>
       <div className="reply-box-wrap">
         {/* 评论框 */}
-        <textarea
+        <textarea ref={commenTextarea}
           className="reply-box-textarea"
           placeholder="发一条友善的评论"
+          value={curComment}
+          onChange={(value) => setComment(value.target.value)}
         />
         {/* 发布按钮 */}
         <div className="reply-box-send">

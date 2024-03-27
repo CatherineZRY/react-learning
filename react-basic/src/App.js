@@ -4,6 +4,9 @@ import ComplexIf from './ComplexIf'
 import Event from './Event'
 import State from './State'
 import Style from './Style'
+import FromControl from './FormControl'
+import GetDom from './GetDom'
+import Parent from './Parent'
 
 // 根组件
 const count = 300
@@ -34,6 +37,9 @@ function App() {
       <Event />
       <State />
       <Style />
+      <FromControl />
+      <GetDom />
+      <Parent />
     </div>
   );
 }
