@@ -2,9 +2,13 @@ import './App.scss'
 import CommentList from './CommentList'
 import Tab from './Tab'
 import PostComment from './PostComment'
+import { DefaultList } from './Data'
+import { useState } from 'react'
 
 
 const App = () => {
+  const [commentList, setCommentList] = useState(DefaultList)
+
   return (
     <div className="app">
       {/* 导航 Tab */}
@@ -21,9 +25,11 @@ const App = () => {
 
       <div className="reply-wrap">
         {/* 发表评论 */}
-        <PostComment />
+        <PostComment commentList={commentList}
+          setCommentList={setCommentList} />
         {/* 评论列表 */}
-        <CommentList />
+        <CommentList commentList={commentList}
+          setCommentList={setCommentList} />
       </div>
     </div>
   )

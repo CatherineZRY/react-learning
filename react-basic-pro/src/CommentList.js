@@ -1,10 +1,9 @@
-import { useState } from 'react'
 import './App.scss'
-import { DefaultList } from './Data'
 import avatar from './images/bozai.png'
 
-function CommentList() {
-  const [commentList, setCommentList] = useState(DefaultList)
+function CommentList({ commentList, setCommentList }) {
+  // const [commentList, setCommentList] = useState(DefaultList)
+
 
   const getUserAvatar = (usrAvarterUrl) => {
     return (

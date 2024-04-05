@@ -3,9 +3,12 @@ import avatar from './images/bozai.png'
 import { v4 as uuidv4 } from 'uuid'
 import dayjs from 'dayjs'
 
-function PostComment() {
+function PostComment({ commentList, setCommentList }) {
   const postCommet = () => {
     console.log('post comment')
+    if (!curComment) {
+      return;
+    }
     const commentInfo = {
       rpid: uuidv4(),
       user: {
@@ -17,7 +20,9 @@ function PostComment() {
       ctime: dayjs(new Date()).format('MM-DD HH:mm'),
       like: 88,
     }
-    console.log(commentInfo);
+    const newCommentList = [].concat(commentList);
+    newCommentList.push(commentInfo);
+    setCommentList(newCommentList);
     setComment('');
     commenTextarea.current.focus();
   }
@@ -41,8 +46,8 @@ function PostComment() {
           onChange={(value) => setComment(value.target.value)}
         />
         {/* 发布按钮 */}
-        <div className="reply-box-send">
-          <div className="send-text" onClick={postCommet}>发布</div>
+        <div className="reply-box-send" onClick={postCommet}>
+          <div className="send-text">发布</div>
         </div>
       </div>
     </div>
