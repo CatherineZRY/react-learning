@@ -1,20 +1,20 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import avatar from './images/bozai.png'
 import { v4 as uuidv4 } from 'uuid'
-import dayjs from 'dayjs'
+import dayjs from 'dayjs';
 
-function PostComment({ commentList, setCommentList }) {
+function PostComment({ commentList, setCommentList, curUser }) {
   const postCommet = () => {
     console.log('post comment')
-    if (!curComment) {
+    if (!curComment || !curUser) {
       return;
     }
     const commentInfo = {
       rpid: uuidv4(),
       user: {
-        uid: '36080105',
-        avatar: '',
-        uname: '许嵩',
+        uid: curUser.uid,
+        avatar: curUser.avatar,
+        uname: curUser.uname,
       },
       content: curComment,
       ctime: dayjs(new Date()).format('MM-DD HH:mm'),
