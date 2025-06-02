@@ -27,3 +27,9 @@
 
 # meituan
 /meituan-project/node_modules
+
+# keeper-app
+/keeper-app/node_modules
+
+# 排除所有练习项目中的node_modules
+/*/node_modules
