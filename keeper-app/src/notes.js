@@ -22,7 +22,44 @@ const notes = [
     title: "Hardware vs. Software",
     content:
       "What's the difference between hardware and software? You can hit your hardware with a hammer, but you can only curse at your software."
-  }
+  },
+  {
+    key: 5,
+    title: "Hardware vs. Software",
+    content:
+      "What's the difference between hardware and software? You can hit your hardware with a hammer, but you can only curse at your software."
+  },
+  {
+    key: 6,
+    title: "Hardware vs. Software",
+    content:
+      "What's the difference between hardware and software? You can hit your hardware with a hammer, but you can only curse at your software."
+  },
+  {
+    key: 7,
+    title: "Hardware vs. Software",
+    content:
+      "What's the difference between hardware and software? You can hit your hardware with a hammer, but you can only curse at your software."
+  },
+  {
+    key: 8,
+    title: "Hardware vs. Software",
+    content:
+      "What's the difference between hardware and software? You can hit your hardware with a hammer, but you can only curse at your software."
+  },
+  {
+    key: 9,
+    title: "Hardware vs. Software",
+    content:
+      "What's the difference between hardware and software? You can hit your hardware with a hammer, but you can only curse at your software."
+  },
+  {
+    key: 10,
+    title: "Hardware vs. Software",
+    content:
+      "What's the difference between hardware and software? You can hit your hardware with a hammer, but you can only curse at your software."
+  },
+
 ];
 
 export default notes;

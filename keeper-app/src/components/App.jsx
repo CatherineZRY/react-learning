@@ -47,12 +47,24 @@ function App() {
     setNoteList(notes);
   }, []);
 
+  const containerStyle = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+    gridTemplateRows: "repeat(auto-fit, minmax(200px, 1fr))",
+    justifyItems: "center",
+    alignItems: "start",
+    gap: "10px"
+  }
 
   return (
     <div>
       <Header />
       <Add onAdd={handleAdd} />
-      {noteList.map(createNote)}
+
+      {/* 原有的Note组件网格 */}
+      <div style={containerStyle}>
+        {noteList.map(createNote)}
+      </div>
       <Footer />
     </div>
   )
