@@ -33,3 +33,4 @@
 
 # 排除所有练习项目中的node_modules
 /*/node_modules
+/*/*/node_modules
