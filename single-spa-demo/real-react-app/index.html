@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0" />
+  <title>React 微应用 - Vite 开发模式</title>
+
+  <!-- SystemJS Import Map for Development -->
+  <script type="systemjs-importmap">
+    {
+      "imports": {
+        "react": "https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js",
+        "react-dom": "https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js",
+        "react-dom/client": "https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js",
+        "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@5/lib/system/single-spa.min.js",
+        "single-spa-react": "https://cdn.jsdelivr.net/npm/single-spa-react@5/lib/system/single-spa-react.min.js",
+        "react-router-dom": "https://cdn.jsdelivr.net/npm/react-router-dom@6/dist/umd/react-router-dom.development.js"
+      }
+    }
+  </script>
+
+  <!-- SystemJS Core -->
+  <script src="https://cdn.jsdelivr.net/npm/systemjs@6/dist/system.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/systemjs@6/dist/extras/amd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/systemjs@6/dist/extras/named-exports.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    .dev-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 14px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .dev-banner strong {
+      color: #ffd700;
+    }
+
+    #root {
+      min-height: calc(100vh - 50px);
+    }
+
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+      font-size: 18px;
+      color: #666;
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 20px;
+      margin: 20px;
+      border-radius: 8px;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dev-banner">
+    <strong>🔧 Vite 开发模式</strong> - React 微应用独立运行中 |
+    <span>端口: 3001</span> |
+    <span>构建工具: Vite</span> |
+    <span>模块格式: SystemJS</span>
+  </div>
+
+  <div id="root">
+    <div class="loading">⚡ 正在加载 React 微应用...</div>
+  </div>
+
+  <script type="module">
+    // 开发环境启动脚本
+    async function startApp() {
+      try {
+        console.log('🚀 启动 React 微应用 (Vite + SystemJS)');
+
+        // 等待 SystemJS 加载完成
+        if (typeof System === 'undefined') {
+          throw new Error('SystemJS 未加载');
+        }
+
+        // 在开发模式下，Vite 会提供模块
+        const appModule = await System.import('/src/index.js');
+
+        console.log('✅ 应用模块加载成功', appModule);
+
+        // 检查是否有 Single-SPA 生命周期函数
+        if (appModule.bootstrap && appModule.mount && appModule.unmount) {
+          console.log('🔄 执行 Single-SPA 生命周期');
+
+          // 执行 bootstrap
+          await appModule.bootstrap();
+
+          // 执行 mount
+          await appModule.mount({
+            domElement: document.getElementById('root'),
+            name: '@company/react-micro-app',
+            customProps: {
+              mode: 'development',
+              standalone: true
+            }
+          });
+
+          console.log('✅ 应用已成功挂载');
+        } else {
+          console.warn('⚠️ 未找到 Single-SPA 生命周期函数');
+        }
+
+      } catch (error) {
+        console.error('❌ 应用启动失败:', error);
+
+        document.getElementById('root').innerHTML = `
+          <div class="error">
+            <h3>应用启动失败</h3>
+            <p><strong>错误信息:</strong> ${error.message}</p>
+            <details>
+              <summary>详细错误信息</summary>
+              <pre>${error.stack}</pre>
+            </details>
+            <p><strong>解决建议:</strong></p>
+            <ul>
+              <li>检查网络连接</li>
+              <li>确认 SystemJS 依赖是否正确加载</li>
+              <li>查看浏览器控制台获取更多信息</li>
+            </ul>
+          </div>
+        `;
+      }
+    }
+
+    // 页面加载完成后启动应用
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', startApp);
+    } else {
+      startApp();
+    }
+
+    // 热更新支持
+    if (import.meta.hot) {
+      import.meta.hot.accept('/src/index.js', (newModule) => {
+        console.log('🔥 热更新检测到变化，重新加载应用');
+        location.reload();
+      });
+    }
+  </script>
+</body>
+
+</html>

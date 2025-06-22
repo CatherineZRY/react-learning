@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+  <title>Single-SPA 跨域问题与通信机制演示</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .demo-section {
+      background: white;
+      margin: 20px 0;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .code-block {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 10px 0;
+      overflow-x: auto;
+    }
+
+    .highlight {
+      background: #fff3cd;
+      padding: 15px;
+      border-left: 4px solid #ffc107;
+      margin: 10px 0;
+    }
+
+    .success {
+      background: #d4edda;
+      padding: 15px;
+      border-left: 4px solid #28a745;
+      margin: 10px 0;
+    }
+
+    .error {
+      background: #f8d7da;
+      padding: 15px;
+      border-left: 4px solid #dc3545;
+      margin: 10px 0;
+    }
+
+    .btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .btn:hover {
+      background: #0056b3;
+    }
+
+    .communication-demo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .micro-app-sim {
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      background: #f9f9f9;
+    }
+
+    .micro-app-sim h4 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .event-log {
+      background: #000;
+      color: #00ff00;
+      padding: 15px;
+      border-radius: 4px;
+      height: 200px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🌐 Single-SPA 跨域问题与通信机制演示</h1>
+
+    <!-- 跨域问题分析 -->
+    <div class="demo-section">
+      <h2>🔍 跨域问题分析</h2>
+
+      <h3>1. 什么情况下存在跨域问题？</h3>
+      <div class="error">
+        <h4>❌ 存在跨域问题的部署方式：</h4>
+        <div class="code-block">
+          基座应用：https://main.example.com
+          微应用A：https://app-a.example.com ← 不同子域
+          微应用B：https://app-b.example.com ← 不同子域
+          微应用C：https://api.other.com ← 完全不同域名
+        </div>
+        <p>在这种情况下，微应用之间的直接通信会受到同源策略限制。</p>
+      </div>
+
+      <div class="success">
+        <h4>✅ 不存在跨域问题的部署方式：</h4>
+        <div class="code-block">
+          基座应用：https://example.com/
+          微应用A：https://example.com/app-a/ ← 同域不同路径
+          微应用B：https://example.com/app-b/ ← 同域不同路径
+          微应用C：https://example.com/app-c/ ← 同域不同路径
+        </div>
+        <p>这是 Single-SPA 推荐的部署方式，所有应用都在同一个域下。</p>
+      </div>
+
+      <h3>2. Single-SPA 的同域优势</h3>
+      <div class="highlight">
+        <p><strong>Single-SPA 的核心优势就是运行时集成，所有微应用最终都运行在同一个页面中！</strong></p>
+        <ul>
+          <li>所有微应用共享同一个 window 对象</li>
+          <li>所有微应用共享同一个 document 对象</li>
+          <li>所有微应用在同一个 JavaScript 执行上下文中</li>
+          <li>因此，微应用间通信不存在跨域限制</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CustomEvent 通信演示 -->
+    <div class="demo-section">
+      <h2>📡 CustomEvent 通信机制演示</h2>
+
+      <div class="communication-demo">
+        <div class="micro-app-sim">
+          <h4>🎯 微应用 A (React)</h4>
+          <button class="btn"
+            onclick="sendFromAppA()">发送消息到应用B</button>
+          <button class="btn"
+            onclick="sendBroadcastFromA()">广播消息</button>
+          <div>
+            <input type="text"
+              id="messageFromA"
+              placeholder="输入消息内容"
+              style="width: 100%; margin: 10px 0; padding: 8px;">
+          </div>
+          <div id="appAReceived"
+            style="margin-top: 10px; min-height: 50px; background: #e3f2fd; padding: 10px; border-radius: 4px;">
+            等待接收消息...
+          </div>
+        </div>
+
+        <div class="micro-app-sim">
+          <h4>⚛️ 微应用 B (Vue)</h4>
+          <button class="btn"
+            onclick="sendFromAppB()">发送消息到应用A</button>
+          <button class="btn"
+            onclick="sendBroadcastFromB()">广播消息</button>
+          <div>
+            <input type="text"
+              id="messageFromB"
+              placeholder="输入消息内容"
+              style="width: 100%; margin: 10px 0; padding: 8px;">
+          </div>
+          <div id="appBReceived"
+            style="margin-top: 10px; min-height: 50px; background: #e8f5e8; padding: 10px; border-radius: 4px;">
+            等待接收消息...
+          </div>
+        </div>
+      </div>
+
+      <h3>事件日志：</h3>
+      <div id="eventLog"
+        class="event-log"></div>
+      <button class="btn"
+        onclick="clearLog()">清空日志</button>
+
+      <h3>CustomEvent 实现代码：</h3>
+      <div class="code-block">
+        <pre>// 发送自定义事件
+function sendMessage(eventName, data) {
+    const event = new CustomEvent(eventName, {
+        detail: {
+            timestamp: new Date().toISOString(),
+            from: 'app-a',
+            to: 'app-b',
+            data: data
+        }
+    });
+    window.dispatchEvent(event);
+}
+
+// 监听自定义事件
+window.addEventListener('micro-app-communication', (event) => {
+    console.log('收到消息:', event.detail);
+    // 处理消息...
+});
+
+// 广播消息给所有应用
+function broadcastMessage(data) {
+    window.dispatchEvent(new CustomEvent('micro-app-broadcast', {
+        detail: {
+            timestamp: new Date().toISOString(),
+            from: 'current-app',
+            data: data
+        }
+    }));
+}</pre>
+      </div>
+    </div>
+
+    <!-- 跨域解决方案 -->
+    <div class="demo-section">
+      <h2>🛠️ 跨域问题解决方案</h2>
+
+      <h3>1. 推荐方案：同域部署</h3>
+      <div class="success">
+        <h4>使用反向代理（如 Nginx）统一域名：</h4>
+        <div class="code-block">
+          <pre># nginx.conf
+server {
+    listen 80;
+    server_name example.com;
+    
+    # 基座应用
+    location / {
+        proxy_pass http://main-app-server:3000;
+    }
+    
+    # 微应用 A
+    location /app-a/ {
+        proxy_pass http://app-a-server:3001/;
+    }
+    
+    # 微应用 B  
+    location /app-b/ {
+        proxy_pass http://app-b-server:3002/;
+    }
+}</pre>
+        </div>
+        <p>这样所有应用都通过 example.com 访问，不存在跨域问题。</p>
+      </div>
+
+      <h3>2. 备选方案：跨域通信</h3>
+      <div class="highlight">
+        <p>如果必须跨域部署，可以使用以下方案：</p>
+        <ul>
+          <li><strong>PostMessage API</strong>：用于 iframe 间通信</li>
+          <li><strong>SharedWorker</strong>：共享 Worker 线程通信</li>
+          <li><strong>LocalStorage + StorageEvent</strong>：存储事件通信</li>
+          <li><strong>WebSocket</strong>：通过服务器中转</li>
+        </ul>
+      </div>
+
+      <div class="code-block">
+        <pre>// PostMessage 跨域通信示例
+// 发送消息到其他域的应用
+window.parent.postMessage({
+    type: 'MICRO_APP_MESSAGE',
+    from: 'app-a',
+    to: 'app-b',
+    data: 'Hello from App A'
+}, 'https://app-b.example.com');
+
+// 接收跨域消息
+window.addEventListener('message', (event) => {
+    if (event.origin !== 'https://app-a.example.com') return;
+    
+    if (event.data.type === 'MICRO_APP_MESSAGE') {
+        console.log('收到跨域消息:', event.data);
+    }
+});</pre>
+      </div>
+    </div>
+
+    <!-- 最佳实践 -->
+    <div class="demo-section">
+      <h2>💡 微前端通信最佳实践</h2>
+
+      <h3>1. 通信方式选择</h3>
+      <div class="highlight">
+        <ul>
+          <li><strong>CustomEvent</strong>：适用于同域环境，简单直接</li>
+          <li><strong>全局状态管理</strong>：Redux、Vuex 等状态管理库</li>
+          <li><strong>URL 参数</strong>：通过路由传递简单数据</li>
+          <li><strong>LocalStorage/SessionStorage</strong>：持久化数据共享</li>
+        </ul>
+      </div>
+
+      <h3>2. 通信协议设计</h3>
+      <div class="code-block">
+        <pre>// 标准化的消息格式
+const MessageProtocol = {
+    // 消息类型
+    TYPES: {
+        USER_LOGIN: 'USER_LOGIN',
+        USER_LOGOUT: 'USER_LOGOUT',
+        ROUTE_CHANGE: 'ROUTE_CHANGE',
+        DATA_UPDATE: 'DATA_UPDATE'
+    },
+    
+    // 创建消息
+    createMessage(type, data, from, to) {
+        return {
+            id: Math.random().toString(36).substr(2, 9),
+            type,
+            timestamp: Date.now(),
+            from,
+            to,
+            data
+        };
+    },
+    
+    // 发送消息
+    send(type, data, from, to = '*') {
+        const message = this.createMessage(type, data, from, to);
+        window.dispatchEvent(new CustomEvent('micro-app-message', {
+            detail: message
+        }));
+    }
+};</pre>
+      </div>
+
+      <h3>3. 注意事项</h3>
+      <div class="error">
+        <ul>
+          <li>避免过度通信，保持微应用的独立性</li>
+          <li>统一消息格式，便于维护和调试</li>
+          <li>做好错误处理和兜底方案</li>
+          <li>考虑消息的生命周期管理</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 事件日志
+    const eventLog = document.getElementById('eventLog');
+
+    function logEvent(message) {
+      const timestamp = new Date().toLocaleTimeString();
+      eventLog.innerHTML += `[${timestamp}] ${message}\n`;
+      eventLog.scrollTop = eventLog.scrollHeight;
+    }
+
+    function clearLog() {
+      eventLog.innerHTML = '';
+    }
+
+    // 微应用 A 的通信逻辑
+    function sendFromAppA() {
+      const message = document.getElementById('messageFromA').value || '来自应用A的消息';
+      const event = new CustomEvent('app-b-message', {
+        detail: {
+          from: 'app-a',
+          to: 'app-b',
+          message: message,
+          timestamp: new Date().toISOString()
+        }
+      });
+      window.dispatchEvent(event);
+      logEvent(`📤 应用A发送消息给应用B: "${message}"`);
+    }
+
+    function sendBroadcastFromA() {
+      const message = document.getElementById('messageFromA').value || '来自应用A的广播消息';
+      const event = new CustomEvent('micro-app-broadcast', {
+        detail: {
+          from: 'app-a',
+          message: message,
+          timestamp: new Date().toISOString()
+        }
+      });
+      window.dispatchEvent(event);
+      logEvent(`📢 应用A广播消息: "${message}"`);
+    }
+
+    // 微应用 B 的通信逻辑
+    function sendFromAppB() {
+      const message = document.getElementById('messageFromB').value || '来自应用B的消息';
+      const event = new CustomEvent('app-a-message', {
+        detail: {
+          from: 'app-b',
+          to: 'app-a',
+          message: message,
+          timestamp: new Date().toISOString()
+        }
+      });
+      window.dispatchEvent(event);
+      logEvent(`📤 应用B发送消息给应用A: "${message}"`);
+    }
+
+    function sendBroadcastFromB() {
+      const message = document.getElementById('messageFromB').value || '来自应用B的广播消息';
+      const event = new CustomEvent('micro-app-broadcast', {
+        detail: {
+          from: 'app-b',
+          message: message,
+          timestamp: new Date().toISOString()
+        }
+      });
+      window.dispatchEvent(event);
+      logEvent(`📢 应用B广播消息: "${message}"`);
+    }
+
+    // 应用A监听来自应用B的消息
+    window.addEventListener('app-a-message', (event) => {
+      const { from, message, timestamp } = event.detail;
+      document.getElementById('appAReceived').innerHTML =
+        `<strong>收到来自${from}的消息：</strong><br>${message}<br><small>时间：${timestamp}</small>`;
+      logEvent(`📥 应用A收到消息: "${message}"`);
+    });
+
+    // 应用B监听来自应用A的消息
+    window.addEventListener('app-b-message', (event) => {
+      const { from, message, timestamp } = event.detail;
+      document.getElementById('appBReceived').innerHTML =
+        `<strong>收到来自${from}的消息：</strong><br>${message}<br><small>时间：${timestamp}</small>`;
+      logEvent(`📥 应用B收到消息: "${message}"`);
+    });
+
+    // 监听广播消息
+    window.addEventListener('micro-app-broadcast', (event) => {
+      const { from, message, timestamp } = event.detail;
+      logEvent(`📻 收到广播消息 (来自${from}): "${message}"`);
+
+      // 更新两个应用的接收区域
+      const broadcastInfo = `<strong>📢 广播消息 (来自${from})：</strong><br>${message}<br><small>时间：${timestamp}</small>`;
+      if (from !== 'app-a') {
+        document.getElementById('appAReceived').innerHTML = broadcastInfo;
+      }
+      if (from !== 'app-b') {
+        document.getElementById('appBReceived').innerHTML = broadcastInfo;
+      }
+    });
+
+    // 初始化日志
+    logEvent('🚀 微前端通信演示系统启动');
+    logEvent('✅ CustomEvent 监听器已设置');
+    logEvent('💡 提示：在输入框中输入消息，然后点击按钮测试通信');
+  </script>
+</body>
+
+</html>

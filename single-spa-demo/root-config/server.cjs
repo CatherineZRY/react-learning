@@ -21,7 +21,10 @@ const server = http.createServer((req, res) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
 
   // 解析请求路径
-  let pathname = req.url === '/' ? '/index.html' : req.url;
+  // let pathname = req.url === '/' ? '/index.html' : req.url; // 真正的single-spa项目demo
+  // let pathname = req.url === '/' ? '/cross-domain-demo.html' : req.url; // custom-event跨域测试
+  let pathname = req.url === '/' ? '/communication-comparison.html' : req.url; // custom-event和postMessage通信对比测试
+
   let filePath = path.join(__dirname, pathname);
 
   // 获取文件扩展名
