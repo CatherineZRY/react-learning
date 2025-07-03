@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
+import DataAttributeDemo from './DataAttributeDemo'
+import EventDelegationDemo from './EventDelegationDemo'
+import NonBubblingEventsDemo from './NonBubblingEventsDemo'
 
 function App() {
   const [logs, setLogs] = useState([])
@@ -183,6 +186,15 @@ const handleClick = (e) => {
           <li><strong>生命周期</strong>：合成事件自动清理，原生事件需要手动清理</li>
         </ul>
       </div>
+
+      {/* Data属性演示 */}
+      <DataAttributeDemo />
+
+      {/* EventDelegationDemo 演示 */}
+      <EventDelegationDemo />
+
+      {/* NonBubblingEventsDemo 演示 */}
+      <NonBubblingEventsDemo />
     </div>
   )
 }
