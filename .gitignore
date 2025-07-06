@@ -34,3 +34,6 @@
 # 排除所有练习项目中的node_modules
 /*/node_modules
 /*/*/node_modules
+
+# chat-app specific
+/chat-app/backend/.env
