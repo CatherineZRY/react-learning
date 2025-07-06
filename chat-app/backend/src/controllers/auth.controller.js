@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
+import cloudinary from "../lib/cloudinary.js";
 import { generateToken, clearCookie } from "../lib/utils.js";
 
 export const signup = async (req, res) => {
@@ -77,26 +78,39 @@ export const logout = (req, res) => {
 
 
 export const updateProfile = async (req, res) => {
-  const { fullName, profilePic } = req.body;
+  const { profilePic } = req.body;
+  if (!profilePic) {
+    return res.status(400).json({ message: "Profile picture is required" });
+  }
   try {
-    if (!fullName || !profilePic) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-    const user = await User.findById(req.user);
+    const curUserId = req.user._id;
+    const user = await User.findById(curUserId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    user.fullName = fullName;
-    user.profilePic = profilePic;
-    await user.save();
-    res.status(200).json({
-      _id: user._id,
-      email: user.email,
-      fullName: user.fullName,
-      profilePic: user.profilePic,
+
+    const uploadedResponse = await cloudinary.uploader.upload(profilePic, {
+      folder: "profilePics",
+      width: 500,
+      height: 500,
+      crop: "fill",
     });
+    const upadateUser = await User.findByIdAndUpdate(curUserId, {
+      profilePic: uploadedResponse.secure_url,
+    }, { new: true }); // { new: true } 表示返回更新后的用户信息
+    res.status(200).json(upadateUser);
   } catch (error) {
     console.log('Error in updateProfile controller: ', error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export const checkAuth = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    res.status(200).json(user);
+  } catch (error) {
+    console.log('Error in checkAuth controller: ', error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 }

@@ -3,7 +3,6 @@ import User from "../models/user.model.js";
 
 export const protectRoute = async (req, res, next) => {
   const token = req.cookies?.jwt;
-  console.log('req: ', req);
   if (!token) {
     return res.status(401).json({ message: "Unauthorized - NO token provided" });
   }
@@ -24,7 +23,7 @@ export const protectRoute = async (req, res, next) => {
     if (!findUser) {
       return res.status(401).json({ message: "Unauthorized - User not found" });
     }
-    req.user = findUser;
+    req.user = findUser; // 将用户信息添加到请求对象中，以便后续请求中可以获取
     next();
   } catch (error) {
     console.log('Error in protectRoute middleware: ', error.message);
