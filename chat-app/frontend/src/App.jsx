@@ -25,7 +25,7 @@ const App = () => {
   if (isCheckingAuth && !authUser) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Loader className="size-10 animate-spin" />
+        <Loader className="w-10 h-10 animate-spin" />
       </div>
     )
   }
@@ -41,13 +41,15 @@ const App = () => {
   return (
     <div>
       <Navbar />
-      <Routes>
-        <Route path="/" element={getProtectedNeedLoginRoute(<HomePage />)} />
-        <Route path="/signup" element={getProtectedNeedLogoutRoute(<SignupPage />)} />
-        <Route path="/login" element={getProtectedNeedLogoutRoute(<LoginPage />)} />
-        <Route path="/settings" element={getProtectedNeedLoginRoute(<SettingsPage />)} />
-        <Route path="/profile" element={getProtectedNeedLoginRoute(<ProfilePage />)} />
-      </Routes>
+      <div className='container mt-16'>
+        <Routes>
+          <Route path="/" element={getProtectedNeedLoginRoute(<HomePage />)} />
+          <Route path="/signup" element={getProtectedNeedLogoutRoute(<SignupPage />)} />
+          <Route path="/login" element={getProtectedNeedLogoutRoute(<LoginPage />)} />
+          <Route path="/settings" element={getProtectedNeedLoginRoute(<SettingsPage />)} />
+          <Route path="/profile" element={getProtectedNeedLoginRoute(<ProfilePage />)} />
+        </Routes>
+      </div>
 
       <Toaster />
     </div>
