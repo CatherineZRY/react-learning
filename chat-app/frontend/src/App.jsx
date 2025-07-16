@@ -21,7 +21,6 @@ const App = () => {
 
   console.log('authUser: ', authUser);
 
-  // if (true) {
   if (isCheckingAuth && !authUser) {
     return (
       <div className="flex justify-center items-center h-screen">

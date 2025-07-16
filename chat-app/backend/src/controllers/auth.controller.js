@@ -25,10 +25,12 @@ export const signup = async (req, res) => {
       generateToken(res, user._id);
       await user.save();
       res.status(201).json({
-        _id: user._id,
-        email: user.email,
-        fullName: user.fullName,
-        profilePic: user.profilePic,
+        user: {
+          _id: user._id,
+          email: user.email,
+          fullName: user.fullName,
+          profilePic: user.profilePic,
+        }
       });
     } else {
       res.status(400).json({ message: "Invalid user data" });
@@ -55,10 +57,12 @@ export const login = async (req, res) => {
     }
     generateToken(res, user._id);
     res.status(200).json({
-      _id: user._id,
-      email: user.email,
-      fullName: user.fullName,
-      profilePic: user.profilePic,
+      user: {
+        _id: user._id,
+        email: user.email,
+        fullName: user.fullName,
+        profilePic: user.profilePic,
+      }
     });
   } catch (error) {
     console.log('Error in login controller: ', error.message);
@@ -78,9 +82,9 @@ export const logout = (req, res) => {
 
 
 export const updateProfile = async (req, res) => {
-  const { profilePic } = req.body;
-  if (!profilePic) {
-    return res.status(400).json({ message: "Profile picture is required" });
+  const { profilePic, fullName } = req.body;
+  if (!profilePic || !fullName) {
+    return res.status(400).json({ message: "Profile picture and full name are required" });
   }
   try {
     const curUserId = req.user._id;
@@ -97,10 +101,13 @@ export const updateProfile = async (req, res) => {
     });
     const upadateUser = await User.findByIdAndUpdate(curUserId, {
       profilePic: uploadedResponse.secure_url,
+      fullName: fullName,
     }, { new: true }); // { new: true } 表示返回更新后的用户信息
-    res.status(200).json(upadateUser);
+    res.status(200).json({
+      user: upadateUser
+    });
   } catch (error) {
-    console.log('Error in updateProfile controller: ', error.message);
+    console.log('Error in updateProfile controller: ', error?.message || error);
     res.status(500).json({ message: "Internal server error" });
   }
 }
@@ -108,7 +115,9 @@ export const updateProfile = async (req, res) => {
 export const checkAuth = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    res.status(200).json(user);
+    res.status(200).json({
+      user: user
+    });
   } catch (error) {
     console.log('Error in checkAuth controller: ', error.message);
     res.status(500).json({ message: "Internal server error" });

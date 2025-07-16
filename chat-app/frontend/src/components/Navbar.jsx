@@ -29,7 +29,7 @@ function Navbar() {
             </Link>
             {authUser && (
               <button onClick={logout}
-                className='flex items-center gap-2'>
+                className='btn btn-sm flex items-center gap-2'>
                 <LogOut className='w-4 h-4' />
                 <span className='hidden sm:inline'>Logout</span>
               </button>
