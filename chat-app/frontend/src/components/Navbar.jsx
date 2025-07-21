@@ -5,7 +5,7 @@ import { MessageSquare, Settings, LogOut } from 'lucide-react';
 function Navbar() {
   const { authUser, logout } = useAuthStore();
   return (
-    <header className='bg-base-100 border-b border-base-300 fixed w-full top-0 z-40 backdrop-blur-lg'>
+    <header className='navbar bg-base-100 border-b border-base-300 fixed w-full top-0 z-40 backdrop-blur-lg'>
       <div className='container mx-auto px-4 h-16'>
         <div className='flex items-center justify-between h-full'>
           <div className='flex items-center justify-between h-full'>
@@ -13,6 +13,7 @@ function Navbar() {
               <div className='w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center mx-auto group-hover:bg-primary/20 transition-colors'>
                 <MessageSquare className='w-6 h-6 text-primary' />
               </div>
+              <h1 className='text-xl font-bold'>Chatty</h1>
             </Link>
           </div>
 
