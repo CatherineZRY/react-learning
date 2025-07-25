@@ -41,7 +41,7 @@ const App = () => {
   return (
     <div data-theme={theme} className='bg-base-100 h-screen'>
       <Navbar />
-      <div className='container fixed overflow-auto'>
+      <div className='w-full fixed overflow-auto'>
         <Routes>
           <Route path="/" element={getProtectedNeedLoginRoute(<HomePage />)} />
           <Route path="/signup" element={getProtectedNeedLogoutRoute(<SignupPage />)} />
