@@ -20,8 +20,6 @@ const App = () => {
     checkAuth();
   }, [checkAuth]);
 
-  console.log('authUser: ', authUser);
-
   if (isCheckingAuth && !authUser) {
     return (
       <div className="flex justify-center items-center h-screen">

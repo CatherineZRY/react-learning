@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 import cloudinary from "../lib/cloudinary.js";
+import { io, getReceiverSocketId } from "../lib/socket.js";
 
 export const getUsersForSideBar = async (req, res) => {
   try {
@@ -60,7 +61,12 @@ export const sendMessageToUser = async (req, res) => {
     });
     await newMessage.save();
 
-    // TODO: 实时消息发送，需要使用socket.io
+    // 实时消息发送，需要使用socket.io
+    const receiverSocketId = getReceiverSocketId(userToChatId);
+    if (receiverSocketId) { // 如果接收者在线，则发送消息
+      io.to(receiverSocketId).emit('newMessage', newMessage);
+    }
+
     res.status(200).json({ message: "Message sent successfully" });
   } catch (error) {
     console.log('Error in sendMessageToUser controller: ', error.message);
