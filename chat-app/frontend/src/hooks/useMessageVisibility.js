@@ -82,13 +82,10 @@ const useMessageVisibility = (messages, containerRef) => {
 
   useEffect(() => {
     // 等待容器元素可用
-    if (!containerRef?.current) {
+    if (containerRef?.current) {
       // console.log('容器元素还未准备好');
-      return () => {
-        cleanObserver();
-      }
+      initObserver();
     }
-    initObserver();
     return () => {
       cleanObserver();
     }

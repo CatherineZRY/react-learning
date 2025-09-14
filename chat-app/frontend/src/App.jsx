@@ -11,6 +11,9 @@ import { useAuthStore } from './store/useAuthStore';
 import { Loader } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 import { useThemeStore } from './store/useThemeStore';
+import CacheStatusIndicator from './components/CacheStatusIndicator';
+// 导入Service Worker管理器以确保其在开发环境自动注册
+import './lib/swManager';
 const App = () => {
 
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -50,6 +53,9 @@ const App = () => {
       </div>
 
       <Toaster />
+      
+      {/* 开发环境显示缓存状态指示器 */}
+      {import.meta.env.DEV && <CacheStatusIndicator />}
     </div>
   )
 }
